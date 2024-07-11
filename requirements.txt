@@ -1,0 +1,4 @@
+fastapi==0.111.0
+kubernetes==30.1.0
+pyhelm==2.14.5
+prometheus-client==0.20.0

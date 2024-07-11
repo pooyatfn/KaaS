@@ -1,0 +1,512 @@
+groups:
+  - name: GroupOne
+    rules:
+      - alert: PrometheusDown
+        expr: up{job="prometheus"} < 1
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Prometheus is Down'
+
+      - alert: MianrudDownCritical
+        expr: up{job="Mianrud-server-exporter"} < 1
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Mianrud Server is Down'
+
+      - alert: PostgresDownCritical
+        expr: up{job="postgres-exporter"} < 1
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Postgres is Down'
+
+      - alert: REDSIServerDownCritical
+        expr: up{job="REDSI-servers-exporter"} < 1
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'REDSI Servers are Down'
+
+      - alert: PushGatewayDownCritical
+        expr: up{job="pushgateway"} < 1
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'PushGateway is Down'
+
+      # Outdated metrics from create_and_send_zabbix_file
+      - alert: OutdatedMetricsFromPushGateway
+        expr: time() - push_time_seconds{instance="mianrud", job="create_and_send_zabbix_file"} > 420
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: last pushed to pushgateway is more than 7 minutes (420 seconds) for create_and_send_zabbix_file'
+
+      # cronjob create_and_send_zabbix_data
+      - alert: NoDataCreateAndSendZabbixData
+        expr: time() - push_time_seconds{instance="mianrud", job="cronjob_monitoring", service="create_and_send_zabbix_data"} > 420
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: last pushed is more than 7 minutes (420 seconds) for create_and_send_zabbix_data'
+
+      - alert: CronjobFailedCreateAndSendZabbixData
+        expr: absent(cronjob_execution_exit_code{instance="mianrud", job="cronjob_monitoring", service="create_and_send_zabbix_data"} == 0)
+        for: 30m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Cronjob Failed: create_and_send_zabbix_data'
+
+      # cronjob send_uptime
+      - alert: NoDataSendUptime
+        expr: time() - push_time_seconds{instance="mianrud", job="cronjob_monitoring", service="send_uptime"} > 1800
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: last pushed is more than 7 minutes for send_uptime'
+
+      - alert: CronjobFailedSendUptime
+        expr: quantile_over_time(0.5, cronjob_execution_exit_code{instance="mianrud", job="cronjob_monitoring", service="send_uptime"}[1h]) > 0
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Cronjob Failed: send_uptime'
+
+      # cronjob process_newfound_urls
+      - alert: NoDataProcessNewfoundUrls
+        expr: time() - push_time_seconds{instance="mianrud", job="cronjob_monitoring", service="process_newfound_urls"} > 1920
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: last pushed is more than 7 minutes for process_newfound_urls'
+
+      - alert: CronjobFailedProcessNewfoundUrls
+        expr: absent(cronjob_execution_exit_code{instance="mianrud", job="cronjob_monitoring", service="process_newfound_urls"} == 0)
+        for: 60m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Cronjob Failed: process_newfound_urls'
+
+      # cronjob process_non_machine_api
+      - alert: NoDataProcessNonMachineApi
+        expr: time() - push_time_seconds{instance="mianrud", job="cronjob_monitoring", service="process_non_machine_api"} > 1920
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: last pushed is more than 7 minutes for process_newfound_urls'
+
+      - alert: CronjobFailedProcessNonMachineApi
+        expr: absent(cronjob_execution_exit_code{instance="mianrud", job="cronjob_monitoring", service="process_non_machine_api"} == 0)
+        for: 60m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Cronjob Failed: process_newfound_urls'
+
+      # cronjob clear_db
+      - alert: NoDataClearDb
+        expr: time() - push_time_seconds{instance="mianrud", job="cronjob_monitoring", service="clear_db"} > 90000
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: last pushed is more than 7 minutes for process_newfound_urls'
+
+      - alert: CronjobFailedClearDb
+        expr: absent(cronjob_execution_exit_code{instance="mianrud", job="cronjob_monitoring", service="clear_db"} == 0)
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Cronjob Failed: process_newfound_urls'
+
+      # cronjob sync_summarize_dns_nama
+      - alert: NoDataSyncSummarizeDnsNama
+        expr: time() - push_time_seconds{instance="mianrud", job="cronjob_monitoring", service="sync_summarize_dns_nama"} > 90000
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: last pushed is more than 7 minutes for process_newfound_urls'
+
+      - alert: CronjobFailedSyncSummarizeDnsNama
+        expr: absent(cronjob_execution_exit_code{instance="mianrud", job="cronjob_monitoring", service="sync_summarize_dns_nama"} == 0)
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Cronjob Failed: process_newfound_urls'
+
+      # cronjob sync_evidences
+      - alert: NoDataSyncEvidences
+        expr: time() - push_time_seconds{instance="mianrud", job="cronjob_monitoring", service="sync_evidences"} > 1800
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: last pushed is more than 7 minutes for process_newfound_urls'
+
+      - alert: CronjobFailedSyncEvidences
+        expr: absent(cronjob_execution_exit_code{instance="mianrud", job="cronjob_monitoring", service="sync_evidences"} == 0)
+        for: 3h
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Cronjob Failed: process_newfound_urls'
+
+      # cronjob mahigiri_backup
+      - alert: NoDataMahigiriBackup
+        expr: time() - push_time_seconds{instance="mianrud", job="cronjob_monitoring", service="mahigiri_backup"} > 90000
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: last pushed is more than 7 minutes for process_newfound_urls'
+
+      - alert: CronjobFailedMahigiriBackup
+        expr: absent(cronjob_execution_exit_code{instance="mianrud", job="cronjob_monitoring", service="mahigiri_backup"} == 0)
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Cronjob Failed: process_newfound_urls'
+
+      # Judgerud metric alerts:
+      #   received_rate
+      #     NoData
+      - alert: NoDataJudgerud1ReceivedRate
+        expr: absent(phishing_fetcher_received_rate{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 31m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Judgerud 1 received rate'
+
+      - alert: NoDataJudgerud2ReceivedRate
+        expr: absent(phishing_fetcher2_received_rate{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 31m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Judgerud 2 received rate'
+
+      - alert: NoDataJudgerud3ReceivedRate
+        expr: absent(phishing_fetcher3_received_rate{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 31m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Judgerud 3 received rate'
+
+      #     UpperBound
+      - alert: UpperBoundJudgerud1ReceivedRate
+        expr: quantile_over_time(0.5, phishing_fetcher_received_rate{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) > 200
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Upper Bound: Judgerud 1 received rate'
+
+      - alert: UpperBoundJudgerud2ReceivedRate
+        expr: quantile_over_time(0.5, phishing_fetcher2_received_rate{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) > 200
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Upper Bound: Judgerud 2 received rate'
+
+      - alert: UpperBoundJudgerud3ReceivedRate
+        expr: quantile_over_time(0.5, phishing_fetcher3_received_rate{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) > 250
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Upper Bound: Judgerud 3 received rate'
+
+      #   celery_queue
+      - alert: UpperBoundJudgerud1CeleryQueue
+        expr: quantile_over_time(0.5, phishing_fetcher_celery_queue{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) > 50
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Upper Bound: Judgerud 1 celery queue'
+
+      - alert: UpperBoundJudgerud2CeleryQueue
+        expr: quantile_over_time(0.5, phishing_fetcher2_celery_queue{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) > 50
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Upper Bound: Judgerud 2 celery queue'
+
+      - alert: UpperBoundJudgerud3CeleryQueue
+        expr: quantile_over_time(0.5, phishing_fetcher3_celery_queue{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) > 50
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Upper Bound: Judgerud 3 celery queue'
+
+      #   captured
+      - alert: NoDataJudgerud1CapturedUrls
+        expr: absent(phishing_fetcher_captured{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 12h
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Judgerud 1 captured urls'
+
+      - alert: NoDataJudgerud2CapturedUrls
+        expr: absent(phishing_fetcher2_captured{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 12h
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Judgerud 2 captured urls'
+
+      - alert: NoDataJudgerud3CapturedUrls
+        expr: absent(phishing_fetcher3_captured{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 12h
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Judgerud 3 captured urls'
+
+      #   uncaptured
+      - alert: UpperBoundJudgerud1UncapturedUrls
+        expr: avg_over_time(phishing_fetcher_uncaptured{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) > 2
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Upper Bound: Judgerud 1 uncaptured urls'
+
+      - alert: UpperBoundJudgerud2UncapturedUrls
+        expr: avg_over_time(phishing_fetcher2_uncaptured{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) > 2
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Upper Bound: Judgerud 2 uncaptured urls'
+
+      - alert: UpperBoundJudgerud3UncapturedUrls
+        expr: avg_over_time(phishing_fetcher3_uncaptured{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) > 2
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Upper Bound: Judgerud 3 uncaptured urls'
+
+      #   fraction_success_test_internet
+      - alert: LowerBoundJudgerud1InternetConnectionTest
+        expr: quantile_over_time(0.5, phishing_fetcher_fraction_success_test_internet{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) < 0.4
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Lower Bound: Judgerud 1 internet connection test'
+
+      - alert: LowerBoundJudgerud2InternetConnectionTest
+        expr: quantile_over_time(0.5, phishing_fetcher2_fraction_success_test_internet{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) < 0.4
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Lower Bound: Judgerud 2 internet connection test'
+
+      - alert: LowerBoundJudgerud3InternetConnectionTest
+        expr: quantile_over_time(0.5, phishing_fetcher3_fraction_success_test_internet{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) < 0.4
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Lower Bound: Judgerud 3 internet connection test'
+
+      #   fraction_success_test_proxy
+      - alert: LowerBoundJudgerud1PsiphonConnectionTest
+        expr: quantile_over_time(0.5, phishing_fetcher_fraction_success_test_proxy{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) < 0.2
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Lower Bound: Judgerud 1 psiphon connection test'
+
+      - alert: LowerBoundJudgerud2PsiphonConnectionTest
+        expr: quantile_over_time(0.5, phishing_fetcher2_fraction_success_test_proxy{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) < 0.2
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Lower Bound: Judgerud 2 psiphon connection test'
+
+      - alert: LowerBoundJudgerud3PsiphonConnectionTest
+        expr: quantile_over_time(0.5, phishing_fetcher3_fraction_success_test_proxy{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) < 0.2
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Lower Bound: Judgerud 3 psiphon connection test'
+
+      # Mianrud metric alerts:
+      #   phishing_proxy_received_rate
+      - alert: NoDataMianrudReceivedRate
+        expr: absent(phishing_proxy_received_rate{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 31m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Mianrud received rate'
+
+      - alert: UpperBoundMianrudReceivedRate
+        expr: quantile_over_time(0.5, phishing_proxy_received_rate{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) > 500
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Upper Bound: Mianrud received rate'
+
+      - alert: UpperBoundMianrudReceivedRate
+        expr: quantile_over_time(0.5, phishing_proxy_received_rate{instance="mianrud", job="create_and_send_zabbix_file"}[1h]) < 10
+        for: 1m
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'Lower Bound: Mianrud received rate'
+
+      # Zayanderud metric alerts:
+      #   phishing_streaming_downsample_rate
+      - alert: NoDataZayanderudsDownsampleRate
+        expr: absent(phishing_streaming_downsample_rate{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 5h
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Zayanderuds downsample rate'
+
+      # nama operators
+      - alert: NoDataNamaOperatorsRightelInputUrl
+        expr: absent(nama_operators_rightel_input_url{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 7d
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Nama operators_rightel input urls'
+
+      - alert: NoDataNamaOperatorsBaleInputUrl
+        expr: absent(nama_operators_bale_input_url{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 7d
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Nama operators_bale input urls'
+
+      - alert: NoDataNamaOperatorsIrancellInputUrl
+        expr: absent(nama_operators_irancell_input_url{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 7d
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Nama operators_irancell input urls'
+
+      - alert: NoDataNamaOperatorsTicInputUrl
+        expr: absent(nama_operators_tic_input_url{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 7d
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Nama operators_tic input urls'
+
+      - alert: NoDataNamaOperatorsHamrahInputUrl
+        expr: absent(nama_operators_hamrah_input_url{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 7d
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Nama operators_hamrah input urls'
+
+      - alert: NoDataNamaOperatorsHamrahInputUrl
+        expr: absent(nama_operators_hamrah_input_url{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 7d
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Nama operators_hamrah input urls'
+
+      - alert: NoDataNamaOperatorsShaparakInputUrl
+        expr: absent(nama_operators_shaparak_input_url{instance="mianrud", job="create_and_send_zabbix_file"})
+        for: 7d
+        labels:
+          severity: high
+          responsible: Mahigiri
+        annotations:
+          summary: 'No Data: Nama operators_shaparak input urls'
+

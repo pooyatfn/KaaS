@@ -1,0 +1,30 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: "api"
+    image: api:latest
+#     depends_on:
+#      db:
+#        condition: service_healthy
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/app/ # real time change
+    stop_signal: SIGKILL
+
+#  db:
+#    build:
+#      context: ./services/db
+#      dockerfile: ./Dockerfile
+#    container_name: postgres
+#    healthcheck:
+#      test: "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h $$DB_HOST -p $$POSTGRES_PORT"
+#      interval: 2s
+#      timeout: 10s
+#      retries: 5
+#    ports:
+#      - 5432:5432
+#    env_file:
+#      - ./deployment/configs/envs/postgres.env

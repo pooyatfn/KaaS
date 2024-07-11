@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: kaas-api
+rules:
+- apiGroups: ["", "apps"]
+  resources: ["jobs", "pods", "secrets", "ingress", "deployments"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kaas-api
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: kaas-api
+  namespace: default
+roleRef:
+  kind: Role # This must be Role or ClusterRole
+  name:  kaas-api # This must match the name of the Role or ClusterRole you wish to bind to
+  apiGroup: rbac.authorization.k8s.io
